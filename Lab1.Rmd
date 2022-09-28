@@ -1,0 +1,18 @@
+---
+title: "EDS223_Lab1"
+author: "Sophia Leiker"
+date: "9/28/2022"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+library(spDataLarge)
+library(tmap)
+```
+
