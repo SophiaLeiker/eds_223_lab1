@@ -5,6 +5,7 @@ date: "9/28/2022"
 output: html_document
 ---
 
+## Downloading packages
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -15,4 +16,125 @@ library(spData)
 library(spDataLarge)
 library(tmap)
 ```
+
+
+## Introduction to tmap
+```{r}
+tm_shape(nz) + #always the first command
+  tm_fill() #filling in polygons associated with spatial object
+
+tm_shape(nz) +
+  tm_fill() +
+  tm_borders() #this just gives us the borders
+
+map_nz <- tm_shape(nz) +
+  tm_polygons()
+class(map_nz)
+
+map_nz
+
+```
+
+
+```{r}
+map_nz1 <- map_nz +
+  tm_shape(nz_elev) + #adding nz elevation
+  tm_raster(alpha = .7) #alpha defines transparency
+```
+
+```{r}
+#Changing the aesthetics
+map_nz1 +
+  tm_shape(nz_height) +
+  tm_dots()
+
+#fill color
+tm_shape(nz) +
+  tm_fill(col = "red")
+
+#border colors
+tm_shape(nz) +
+  tm_borders(col = "blue")
+
+#border width
+tm_shape(nz) +
+  tm_borders(lwd = 3)
+
+#line type
+tm_shape(nz) +
+  tm_borders(lty = 3)
+
+#all together
+tm_shape(nz) +
+  tm_fill(col = "red", alpha = 0.3) +
+  tm_borders(col = "blue", lwd = 3, lty = 2)
+
+```
+
+## Editing a full map
+
+```{r}
+#Adding additional variables
+
+legend_title <- expression("Area (km"^2*")") #adding more complicated character vectors
+
+tm_shape(nz) +
+  tm_fill(col = "Land_area", title = legend_title) + #this divides the input values into bins of equal ranges
+  tm_borders()
+```
+
+## Incorporating the Style argument to figure out where the different breaks are
+
+```{r}
+tm_shape(nz) +
+  tm_polygons(col = "Median_income", style = "pretty") #pretty is the default, rounds breaks into evenly spaced full numbers 
+
+tm_shape(nz) +
+  tm_polygons(col = "Median_income", style = "equal") #breaks into evenly spaced bins from the whole dataset
+
+tm_shape(nz) +
+  tm_polygons(col = "Median_income", style = "quantile") #breaks into quantiles
+
+```
+
+## Defining breaks as their own variable
+
+```{r}
+breaks <- c(0,3,4,5)*10000
+
+#changing the breaks
+tm_shape(nz) +
+  tm_polygons(col = "Median_income", breaks = breaks)
+
+#using rastser variables
+map_nz +
+  tm_shape(nz_elev) +
+  tm_raster(alpha = 0.7, 
+            style = "cont")
+
+#categorical variables 
+map_nz +
+  tm_shape(nz) +
+  tm_polygons(col = "Island",
+              style = "cat")
+
+#adding a compass and a scale bar
+map_nz +
+  tm_compass(type = "4star", position = c("left", "top")) +
+  tm_scale_bar(breaks = c(0,100,200))
+
+#changing the background color
+map_nz +
+  tm_graticules() +
+  tm_layout(bg.color = "lightblue")
+
+#interactive map
+tmap_mode("view")
+map_nz
+
+#back to just plotting
+tmap_mode("plot")
+map_nz
+```
+
 
